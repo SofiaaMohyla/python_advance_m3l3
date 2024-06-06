@@ -1,0 +1,28 @@
+SELECT * FROM Customers;
+
+SELECT * FROM Orders;
+
+
+SELECT * FROM Products;
+
+SELECT * FROM Customers WHERE Country = 'USA';
+
+SELECT * FROM Orders WHERE OrderDate >= '2023-01-01' AND OrderDate <= '2023-03-31';
+
+SELECT * FROM Customers ORDER BY Name ASC;
+
+SELECT CustomerID, COUNT(OrderID) AS OrderCount
+FROM Orders
+GROUP BY CustomerID;
+
+SELECT COUNT(DISTINCT CustomerID) AS UniqueCustomers
+FROM Orders;
+
+SELECT CustomerID, COUNT(OrderID) AS OrderCount
+FROM Orders
+GROUP BY CustomerID
+HAVING COUNT(OrderID) > 1;
+
+SELECT CustomerID, COUNT(OrderID) AS OrderCount, SUM(Amount) AS TotalAmount, AVG(Amount) AS AverageAmount
+FROM Orders
+GROUP BY CustomerID;
