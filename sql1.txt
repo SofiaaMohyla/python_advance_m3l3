@@ -1,59 +1,106 @@
-CREATE TABLE Customers (
-    CustomerID INT PRIMARY KEY,
-    Name VARCHAR(100),
-    Country VARCHAR(50)
+CREATE TABLE games (
+    game_id     INTEGER PRIMARY KEY AUTOINCREMENT,
+    title       TEXT NOT NULL,
+    genre       TEXT NOT NULL,
+    price       REAL NOT NULL
 );
 
-CREATE TABLE Orders (
-    OrderID INT PRIMARY KEY,
-    OrderDate DATE,
-    CustomerID INT,
-    Amount DECIMAL(10, 2),
-    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
+CREATE TABLE players (
+    player_id   INTEGER PRIMARY KEY AUTOINCREMENT,
+    first_name  TEXT NOT NULL,
+    last_name   TEXT NOT NULL,
+    email       TEXT NOT NULL UNIQUE
 );
 
-CREATE TABLE Products (
-    ProductID INT PRIMARY KEY,
-    ProductName VARCHAR(100),
-    Price DECIMAL(10, 2)
-);
-
-CREATE TABLE OrderDetails (
-    OrderDetailID INT PRIMARY KEY,
-    OrderID INT,
-    ProductID INT,
-    Quantity INT,
-    FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
-    FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
+CREATE TABLE purchases (
+    purchase_id   INTEGER PRIMARY KEY AUTOINCREMENT,
+    player_id     INTEGER NOT NULL,
+    game_id       INTEGER NOT NULL,
+    quantity      INTEGER NOT NULL,
+    purchase_date DATE NOT NULL,
+    FOREIGN KEY (player_id) REFERENCES players(player_id),
+    FOREIGN KEY (game_id)   REFERENCES games(game_id)
 );
 
 
--- Вставка тестових даних
-INSERT INTO Customers (CustomerID, Name, Country) VALUES
-(1, 'John Doe', 'USA'),
-(2, 'Anna Smith', 'UK'),
-(3, 'Robert Brown', 'Canada');
-
-INSERT INTO Orders (OrderID, OrderDate, CustomerID, Amount) VALUES
-(1, '2023-01-15', 1, 150.00),
-(2, '2023-02-10', 2, 200.00),
-(3, '2023-03-05', 1, 300.00),
-(4, '2023-04-12', 3, 450.00);
-
-INSERT INTO Products (ProductID, ProductName, Price) VALUES
-(1, 'Laptop', 1000.00),
-(2, 'Mouse', 25.00),
-(3, 'Keyboard', 50.00);
-
-INSERT INTO OrderDetails (OrderDetailID, OrderID, ProductID, Quantity) VALUES
-(1, 1, 1, 1),
-(2, 1, 2, 2),
-(3, 2, 2, 4),
-(4, 3, 1, 2),
-(5, 3, 3, 1),
-(6, 4, 1, 1);
 
 
+INSERT INTO games (title, genre, price) VALUES
+  ('Elden Scrolls V',        'RPG',        59.99),
+  ('Galaxy Warfare',         'Shooter',    49.99),
+  ('Kingdoms & Castles 2',   'Strategy',   39.99),
+  ('Pixel Odyssey',          'Indie',      19.99),
+  ('Speed Legends',          'Racing',     29.99),
+  ('Mythic Quest Online',    'MMO',        14.99),
+  ('Shadow Recon',           'Shooter',    44.99),
+  ('FarmVille Neo',          'Simulation', 24.99),
+  ('Star Traders',           'Strategy',   34.99),
+  ('Dreamscape',             'RPG',        54.99);
+
+INSERT INTO players (first_name, last_name, email) VALUES
+  ('Artem',   'Koval',     'artem.koval@example.com'),
+  ('Oksana',  'Lytvyn',    'oksana.lytvyn@example.com'),
+  ('Sergii',  'Rudenko',   'sergii.rudenko@example.com'),
+  ('Olena',   'Pavlenko',  'olena.pavlenko@example.com'),
+  ('Dmytro',  'Savchenko', 'dmytro.savchenko@example.com');
+  
+  
+  
+ 
+INSERT INTO purchases (player_id, game_id, quantity, purchase_date) VALUES
+  (1, 1, 1, DATE('2025-08-15')),
+  (1, 2, 2, DATE('2025-08-16')),
+  (2, 4, 1, DATE('2025-08-16')),
+  (2, 10,1, DATE('2025-08-17')),
+  (3, 3, 3, DATE('2025-08-17')),
+  (4, 7, 2, DATE('2025-08-18')),
+  (5, 8, 1, DATE('2025-08-18')),
+  (5, 9, 2, DATE('2025-08-18')),
+  (3, 2, 1, DATE('2025-08-18'));
+
+  
+  
+  
+SELECT * FROM games;
+SELECT title, price FROM games;
+SELECT DISTINCT genre FROM games;
 
 
+SELECT * FROM games WHERE price > 40;
+SELECT title, genre FROM games WHERE genre IN ('RPG','Shooter');
+SELECT * FROM players WHERE email LIKE '%@example.com';
 
+
+SELECT title, price FROM games ORDER BY price DESC;
+SELECT title, price FROM games ORDER BY price DESC LIMIT 3;
+
+
+SELECT COUNT(*) AS games_total FROM games;
+SELECT genre, COUNT(*) AS games_in_genre FROM games GROUP BY genre;
+SELECT genre, COUNT(*) AS games_in_genre FROM games GROUP BY genre HAVING COUNT(*) > 1;
+
+
+SELECT * FROM purchases;
+SELECT purchase_id, player_id, game_id, quantity, purchase_date FROM purchases WHERE purchase_date >= DATE('2025-08-17');
+
+
+SELECT ROUND(SUM(pu.quantity * g.price), 2) AS total_revenue
+FROM purchases pu
+JOIN games g ON g.game_id = pu.game_id;
+
+
+SELECT pu.purchase_id,
+       pu.purchase_date,
+       pl.first_name || ' ' || pl.last_name AS player_name,
+       pu.game_id,
+       pu.quantity
+FROM purchases pu
+JOIN players pl ON pu.player_id = pl.player_id;
+
+SELECT pu.purchase_id,
+       pu.purchase_date,
+       pu.player_id,
+       g.title,
+       pu.quantity
+FROM purchases pu
+JOIN games g ON pu.game_id = g.game_id;

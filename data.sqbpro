@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/buf1/python_advance_m3l3/data.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="125"/><column_width id="3" width="2459"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,5:maingames"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="games" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="84"/><column index="2" value="168"/><column index="3" value="84"/><column index="4" value="52"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1">CREATE TABLE games (
+    game_id     INTEGER PRIMARY KEY AUTOINCREMENT,
+    title       TEXT NOT NULL,
+    genre       TEXT NOT NULL,
+    price       REAL NOT NULL
+);
+
+CREATE TABLE players (
+    player_id   INTEGER PRIMARY KEY AUTOINCREMENT,
+    first_name  TEXT NOT NULL,
+    last_name   TEXT NOT NULL,
+    email       TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE purchases (
+    purchase_id   INTEGER PRIMARY KEY AUTOINCREMENT,
+    player_id     INTEGER NOT NULL,
+    game_id       INTEGER NOT NULL,
+    quantity      INTEGER NOT NULL,
+    purchase_date DATE NOT NULL,
+    FOREIGN KEY (player_id) REFERENCES players(player_id),
+    FOREIGN KEY (game_id)   REFERENCES games(game_id)
+);і</sql><sql name="SQL 2">INSERT INTO games (title, genre, price) VALUES
+  ('Elden Scrolls V',        'RPG',        59.99),
+  ('Galaxy Warfare',         'Shooter',    49.99),
+  ('Kingdoms &amp; Castles 2',   'Strategy',   39.99),
+  ('Pixel Odyssey',          'Indie',      19.99),
+  ('Speed Legends',          'Racing',     29.99),
+  ('Mythic Quest Online',    'MMO',        14.99),
+  ('Shadow Recon',           'Shooter',    44.99),
+  ('FarmVille Neo',          'Simulation', 24.99),
+  ('Star Traders',           'Strategy',   34.99),
+  ('Dreamscape',             'RPG',        54.99);
+
+INSERT INTO players (first_name, last_name, email) VALUES
+  ('Artem',   'Koval',     'artem.koval@example.com'),
+  ('Oksana',  'Lytvyn',    'oksana.lytvyn@example.com'),
+  ('Sergii',  'Rudenko',   'sergii.rudenko@example.com'),
+  ('Olena',   'Pavlenko',  'olena.pavlenko@example.com'),
+  ('Dmytro',  'Savchenko', 'dmytro.savchenko@example.com');</sql><sql name="SQL 3">INSERT INTO purchases (player_id, game_id, quantity, purchase_date) VALUES
+  (1, 1, 1, DATE('2025-08-15')),
+  (1, 2, 2, DATE('2025-08-16')),
+  (2, 4, 1, DATE('2025-08-16')),
+  (2, 10,1, DATE('2025-08-17')),
+  (3, 3, 3, DATE('2025-08-17')),
+  (4, 7, 2, DATE('2025-08-18')),
+  (5, 8, 1, DATE('2025-08-18')),
+  (5, 9, 2, DATE('2025-08-18')),
+  (3, 2, 1, DATE('2025-08-18'));
+</sql><sql name="SQL 4">SELECT * FROM games;
+SELECT title, price FROM games;
+SELECT DISTINCT genre FROM games;
+</sql><sql name="SQL 5">SELECT * FROM games WHERE price &gt; 40;
+SELECT title, genre FROM games WHERE genre IN ('RPG','Shooter');
+SELECT * FROM players WHERE email LIKE '%@example.com';
+</sql><sql name="SQL 6">SELECT title, price FROM games ORDER BY price DESC;
+SELECT title, price FROM games ORDER BY price DESC LIMIT 3;
+</sql><sql name="SQL 7">SELECT COUNT(*) AS games_total FROM games;
+SELECT genre, COUNT(*) AS games_in_genre FROM games GROUP BY genre;
+SELECT genre, COUNT(*) AS games_in_genre FROM games GROUP BY genre HAVING COUNT(*) &gt; 1;
+</sql><sql name="SQL 8">SELECT * FROM purchases;
+SELECT purchase_id, player_id, game_id, quantity, purchase_date FROM purchases WHERE purchase_date &gt;= DATE('2025-08-17');
+</sql><sql name="SQL 9">SELECT ROUND(SUM(pu.quantity * g.price), 2) AS total_revenue
+FROM purchases pu
+JOIN games g ON g.game_id = pu.game_id;</sql><sql name="SQL 10">SELECT pu.purchase_id,
+       pu.purchase_date,
+       pl.first_name || ' ' || pl.last_name AS player_name,
+       pu.game_id,
+       pu.quantity
+FROM purchases pu
+JOIN players pl ON pu.player_id = pl.player_id;
+
+SELECT pu.purchase_id,
+       pu.purchase_date,
+       pu.player_id,
+       g.title,
+       pu.quantity
+FROM purchases pu
+JOIN games g ON pu.game_id = g.game_id;</sql><current_tab id="0"/></tab_sql></sqlb_project>
