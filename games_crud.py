@@ -8,7 +8,7 @@ conn = sqlite3.connect(DB_NAME)
 def create_table():
     conn.execute(
         """
-        CREATE TABLE IF NOT EXISTS "Ігри" (
+        CREATE TABLE IF NOT EXISTS games (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             genre TEXT,
@@ -25,7 +25,7 @@ def add_game():
     year = input("Рік: ")
 
     conn.execute(
-        'INSERT INTO "Ігри" (name, genre, year) VALUES (?, ?, ?)',
+        "INSERT INTO games (name, genre, year) VALUES (?, ?, ?)",
         (name, genre, year),
     )
     conn.commit()
@@ -34,7 +34,7 @@ def add_game():
 
 
 def show_games():
-    games = conn.execute('SELECT id, name, genre, year FROM "Ігри"').fetchall()
+    games = conn.execute("SELECT id, name, genre, year FROM games").fetchall()
 
     if not games:
         print("Ігор поки немає.")
@@ -52,7 +52,7 @@ def update_game():
     year = input("Новий рік: ")
 
     conn.execute(
-        'UPDATE "Ігри" SET name = ?, genre = ?, year = ? WHERE id = ?',
+        "UPDATE games SET name = ?, genre = ?, year = ? WHERE id = ?",
         (name, genre, year, game_id),
     )
     conn.commit()
@@ -64,7 +64,7 @@ def delete_game():
     show_games()
     game_id = input("ID гри для видалення: ")
 
-    conn.execute('DELETE FROM "Ігри" WHERE id = ?', (game_id,))
+    conn.execute("DELETE FROM games WHERE id = ?", (game_id,))
     conn.commit()
 
     print("Гру видалено.")
